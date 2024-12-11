@@ -50,6 +50,8 @@ class ReposListFragment : Fragment() {
     super.onViewCreated(view, savedInstanceState)
     setupBindings()
     subscribeToObservables()
+
+    btnRetry.setOnClickListener { reposListViewModel.onRetryButtonPressed() }
   }
 
   private fun setupBindings() {
@@ -74,10 +76,7 @@ class ReposListFragment : Fragment() {
   }
 
   private fun onLoadedState(repos: List<RepoUi>) {
-    rvRepos.visibility = View.VISIBLE
-    pbLoadingBar.visibility = View.GONE
-    rlWarningContainer.visibility = View.GONE
-    btnRetry.visibility = View.GONE
+    showReposList()
 
     val rvAdapter =
       ReposAdapter(repos).apply {
@@ -88,17 +87,11 @@ class ReposListFragment : Fragment() {
   }
 
   private fun onLoadingState() {
-    rvRepos.visibility = View.GONE
-    pbLoadingBar.visibility = View.VISIBLE
-    rlWarningContainer.visibility = View.GONE
-    btnRetry.visibility = View.GONE
+    showLoadingBar()
   }
 
   private fun onErrorState(error: String) {
-    rvRepos.visibility = View.GONE
-    pbLoadingBar.visibility = View.GONE
-    rlWarningContainer.visibility = View.VISIBLE
-    btnRetry.visibility = View.VISIBLE
+    showWarningContainer()
 
     val keyword = requireContext().getString(R.string.no_internet_error_keyword)
     if (error.contains(keyword, true)) {
@@ -114,16 +107,34 @@ class ReposListFragment : Fragment() {
   }
 
   private fun onEmptyState() {
-    rvRepos.visibility = View.GONE
-    pbLoadingBar.visibility = View.GONE
-    rlWarningContainer.visibility = View.VISIBLE
-    btnRetry.visibility = View.VISIBLE
+    showWarningContainer()
 
     ivWarningIcon.setImageResource(R.drawable.empty_repos_list_icon)
     tvWarningTitle.setText(R.string.warning_container_empty_title)
     tvWarningDescription.setText(R.string.warning_container_empty_description)
     tvWarningTitle.setTextColor(ContextCompat.getColor(requireContext(), R.color.secondary))
     btnRetry.setText(R.string.btn_retry_text_on_empty)
+  }
+
+  private fun showReposList() {
+    rvRepos.visibility = View.VISIBLE
+    pbLoadingBar.visibility = View.GONE
+    rlWarningContainer.visibility = View.GONE
+    btnRetry.visibility = View.GONE
+  }
+
+  private fun showLoadingBar() {
+    rvRepos.visibility = View.GONE
+    pbLoadingBar.visibility = View.VISIBLE
+    rlWarningContainer.visibility = View.GONE
+    btnRetry.visibility = View.GONE
+  }
+
+  private fun showWarningContainer() {
+    rvRepos.visibility = View.GONE
+    pbLoadingBar.visibility = View.GONE
+    rlWarningContainer.visibility = View.VISIBLE
+    btnRetry.visibility = View.VISIBLE
   }
 
   override fun onDestroyView() {

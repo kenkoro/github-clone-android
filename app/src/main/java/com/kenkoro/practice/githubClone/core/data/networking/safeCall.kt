@@ -1,6 +1,5 @@
 package com.kenkoro.practice.githubClone.core.data.networking
 
-import android.util.Log
 import com.kenkoro.practice.githubClone.core.domain.util.NetworkError
 import com.kenkoro.practice.githubClone.core.domain.util.Result
 import kotlinx.coroutines.ensureActive
@@ -15,9 +14,8 @@ suspend inline fun <reified T> safeCall(execute: () -> Response<T>): Result<T, N
     } catch (e: IOException) {
       return Result.Error(NetworkError.NoInternet)
     } catch (e: Exception) {
-      Log.d("kenkoro", e.toString())
       /*
-       * Throws a specific exception if there's an error, and the
+       * Throws a specific exception if there's an error and the
        * coroutine scope is no longer active.
        */
       coroutineContext.ensureActive()

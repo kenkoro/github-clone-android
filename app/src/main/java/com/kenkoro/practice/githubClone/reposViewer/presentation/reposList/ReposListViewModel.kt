@@ -33,6 +33,14 @@ class ReposListViewModel
     val state: LiveData<State> = _state
 
     init {
+      getRepositories()
+    }
+
+    private fun getRepositories() {
+      if (state.value !is State.Loading) {
+        _state.value = State.Loading
+      }
+
       viewModelScope.launch {
         val result =
           withContext(Dispatchers.IO) {
@@ -60,6 +68,10 @@ class ReposListViewModel
     private fun onError(networkError: NetworkError) {
       val message = errorMessageProvider.getMessage(networkError)
       _state.value = State.Error(message)
+    }
+
+    fun onRetryButtonPressed() {
+      getRepositories()
     }
 
     sealed interface State {
